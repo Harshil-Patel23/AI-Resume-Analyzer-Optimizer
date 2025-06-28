@@ -1,0 +1,396 @@
+{% extends "base.html" %} {% block title %}Analysis Results - AI Resume
+Analyzer{% endblock %} {% block content %}
+<div class="mb-8">
+  <div class="flex items-center justify-between">
+    <h1 class="text-3xl font-bold text-gray-900">📊 Analysis Results</h1>
+    <a
+      href="{{ url_for('index') }}"
+      class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+    >
+      ← Analyze Another Resume
+    </a>
+  </div>
+
+  {% if results.job_title %}
+  <p class="text-gray-600 mt-2">
+    Analysis for: <strong>{{ results.job_title }}</strong>
+  </p>
+  {% endif %}
+</div>
+
+<!-- Score Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+  <!-- Basic Score -->
+  <div
+    class="score-container rounded-xl p-6 text-white text-center hover-lift animate-fade-in"
+  >
+    <h3 class="text-lg font-semibold mb-2">Basic Match Score</h3>
+    <div class="text-4xl font-bold">{{ results.basic_score }}%</div>
+    <p class="text-sm opacity-90 mt-2">Traditional keyword matching</p>
+  </div>
+
+  <!-- Weighted Score -->
+  {% if results.weighted_score is not none %}
+  <div
+    class="weighted-score-container rounded-xl p-6 text-center hover-lift animate-fade-in"
+    style="animation-delay: 0.1s"
+  >
+    <h3 class="text-lg font-semibold mb-2 text-gray-800">Smart Score</h3>
+    <div class="text-4xl font-bold text-gray-800">
+      {{ results.weighted_score }}%
+    </div>
+    <p class="text-sm text-gray-600 mt-2">AI-optimized scoring</p>
+  </div>
+  {% endif %}
+
+  <!-- Experience Info
+  {% if results.experience_info.get('total_years', 0) > 0 %}
+  <div
+    class="bg-purple-100 rounded-xl p-6 text-center hover-lift animate-fade-in"
+    style="animation-delay: 0.2s"
+  >
+    <h3 class="text-lg font-semibold text-purple-800 mb-2">Experience</h3>
+    <div class="text-4xl font-bold text-purple-800">
+      {{ results.experience_info.total_years }}
+    </div>
+    <p class="text-sm text-purple-600 mt-2">Years of experience</p>
+  </div> -->
+  {% endif %}
+</div>
+
+<!-- ATS Score -->
+{% if results.ats_results and results.options.ats %}
+<div
+  class="bg-white rounded-xl shadow-lg p-6 mb-8 hover-lift animate-fade-in"
+  style="animation-delay: 0.3s"
+>
+  <h2 class="text-2xl font-bold text-gray-900 mb-4">
+    🤖 ATS Compatibility Check
+  </h2>
+
+  {% set ats_score = results.ats_results.ats_score %} {% if ats_score >= 80 %}
+  {% set score_color = "green" %} {% elif ats_score >= 60 %} {% set score_color
+  = "yellow" %} {% else %} {% set score_color = "red" %} {% endif %}
+
+  <div class="ats-score-container rounded-lg p-4 text-white text-center mb-4">
+    <h3 class="text-xl font-semibold">ATS Score: {{ ats_score }}%</h3>
+  </div>
+
+  {% if results.ats_results.issues %}
+  <div class="mb-4">
+    <h4 class="font-semibold text-red-800 mb-2">⚠️ Issues Found:</h4>
+    <ul class="space-y-1">
+      {% for issue in results.ats_results.issues %}
+      <li class="text-red-700 text-sm">• {{ issue }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %} {% if results.ats_results.recommendations %}
+  <div>
+    <h4 class="font-semibold text-green-800 mb-2">✅ Recommendations:</h4>
+    <ul class="space-y-1">
+      {% for rec in results.ats_results.recommendations %}
+      <li class="text-green-700 text-sm">• {{ rec }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+</div>
+{% endif %}
+
+<!-- Semantic Matches -->
+{% if results.semantic_matches and results.options.semantic %}
+<div
+  class="bg-white rounded-xl shadow-lg p-6 mb-8 hover-lift animate-fade-in"
+  style="animation-delay: 0.4s"
+>
+  <h2 class="text-2xl font-bold text-gray-900 mb-4">🧠 AI Semantic Matches</h2>
+  <p class="text-gray-600 mb-6">
+    Skills matched using AI understanding (not just exact words)
+  </p>
+
+  {% for category, matches in results.semantic_matches.items() %} {% if matches
+  %}
+  <div class="mb-6">
+    <h3 class="text-lg font-semibold text-gray-800 mb-3">
+      {{ category.title() }}
+    </h3>
+    <div class="space-y-3">
+      {% for match in matches %}
+      <div class="bg-orange-50 border border-orange-200 rounded-lg p-4">
+        <div class="flex justify-between items-center">
+          <div>
+            <strong class="text-orange-800">"{{ match.jd_skill }}"</strong>
+            <span class="text-gray-500">↔</span>
+            <strong class="text-orange-800">"{{ match.resume_skill }}"</strong>
+          </div>
+          <div class="text-orange-600 font-bold">
+            {{ (match.similarity * 100) | int }}% similar
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %} {% endfor %}
+</div>
+{% endif %}
+
+<!-- Skill Analysis -->
+<div
+  class="bg-white rounded-xl shadow-lg p-6 mb-8 hover-lift animate-fade-in"
+  style="animation-delay: 0.5s"
+>
+  <h2 class="text-2xl font-bold text-gray-900 mb-6">
+    📈 Detailed Skill Analysis
+  </h2>
+
+  <!-- Required Skills -->
+  <div class="mb-6">
+    <h3 class="text-lg font-semibold text-gray-800 mb-3">⭐ Required Skills</h3>
+    <div class="flex flex-wrap">
+      {% for category, data in results.details.items() %} {% for skill in
+      data.required %}
+      <span
+        class="skill-tag skill-required"
+        style="
+          background: aqua;
+          padding: 11px;
+          margin: 5px;
+          border-radius: 25px;
+        "
+        >{{ skill }}</span
+      >
+      {% endfor %} {% endfor %}
+    </div>
+  </div>
+
+  <!-- Matching Skills -->
+  <div class="mb-6">
+    <h3 class="text-lg font-semibold text-gray-800 mb-3">✅ Matching Skills</h3>
+    <div class="flex flex-wrap">
+      {% for category, data in results.details.items() %} {% for skill in
+      data.matched %}
+      <span
+        class="skill-tag skill-matched"
+        style="
+          background: rgb(0, 255, 0);
+          padding: 11px;
+          margin: 5px;
+          border-radius: 25px;
+        "
+        >{{ skill }}</span
+      >
+      {% endfor %} {% endfor %}
+    </div>
+  </div>
+
+  <!-- Missing Skills -->
+  <div class="mb-6">
+    <h3 class="text-lg font-semibold text-gray-800 mb-3">❌ Missing Skills</h3>
+    <div class="flex flex-wrap">
+      {% for category, data in results.details.items() %} {% for skill in
+      data.missing %}
+      <span
+        class="skill-tag skill-missing"
+        style="
+          background: rgb(255, 71, 71);
+          padding: 11px;
+          margin: 5px;
+          border-radius: 25px;
+        "
+        >{{ skill }}</span
+      >
+      {% endfor %} {% endfor %}
+    </div>
+  </div>
+</div>
+
+<!-- Optimization Suggestions -->
+{% if results.suggestions and results.options.suggestions %}
+<div
+  class="bg-white rounded-xl shadow-lg p-6 mb-8 hover-lift animate-fade-in"
+  style="animation-delay: 0.6s"
+>
+  <h2 class="text-2xl font-bold text-gray-900 mb-6">
+    💡 Optimization Suggestions
+  </h2>
+
+  <div class="space-y-4">
+    {% for suggestion in results.suggestions %}
+    <div
+      class="{% if suggestion.type == 'critical' %}bg-red-50 border-l-4 border-red-500{% else %}bg-blue-50 border-l-4 border-blue-500{% endif %} p-4 rounded-r-lg"
+    >
+      <div class="flex items-start">
+        <div class="text-2xl mr-3">
+          {% if suggestion.type == 'critical' %}🚨{% else %}💡{% endif %}
+        </div>
+        <div>
+          <p
+            class="font-semibold {% if suggestion.type == 'critical' %}text-red-800{% else %}text-blue-800{% endif %}"
+          >
+            {{ suggestion.message }}
+          </p>
+          <p
+            class="{% if suggestion.type == 'critical' %}text-red-600{% else %}text-blue-600{% endif %} text-sm mt-1"
+          >
+            <strong>Action:</strong> {{ suggestion.action }}
+          </p>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<!-- Category Breakdown -->
+<div
+  class="bg-white rounded-xl shadow-lg p-6 mb-8 hover-lift animate-fade-in"
+  style="animation-delay: 0.7s"
+>
+  <h2 class="text-2xl font-bold text-gray-900 mb-6">📊 Category Breakdown</h2>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for category, data in results.details.items() %}
+    <div class="bg-gray-50 rounded-lg p-4 border">
+      <h3 class="font-semibold text-gray-800 mb-3">{{ category.title() }}</h3>
+
+      <div class="space-y-2 text-sm">
+        <div class="flex justify-between">
+          <span class="text-gray-600">Required:</span>
+          <span class="font-medium">{{ data.required | length }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-gray-600">Matched:</span>
+          <span class="font-medium text-green-600"
+            >{{ data.matched | length }}</span
+          >
+        </div>
+        <div class="flex justify-between">
+          <span class="text-gray-600">Missing:</span>
+          <span class="font-medium text-red-600"
+            >{{ data.missing | length }}</span
+          >
+        </div>
+        <div class="flex justify-between pt-2 border-t">
+          <span class="text-gray-600">Match Rate:</span>
+          <span class="font-bold">
+            {% if data.required | length > 0 %} {{ ((data.matched | length) /
+            (data.required | length) * 100) | int }}% {% else %} N/A {% endif %}
+          </span>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Analysis Summary -->
+<div
+  class="bg-gradient-to-r from-green-400 to-blue-500 rounded-xl shadow-lg p-6 text-white hover-lift animate-fade-in"
+  style="animation-delay: 0.8s"
+>
+  <h2 class="text-2xl font-bold mb-4">📋 Analysis Summary</h2>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="text-center">
+      <div class="text-3xl font-bold">
+        {% set total_required = results.details.values() |
+        map(attribute='required') | map('length') | sum %} {% set total_matched
+        = results.details.values() | map(attribute='matched') | map('length') |
+        sum %} {{ total_matched }}
+      </div>
+      <p class="text-sm opacity-90">Skills Matched</p>
+    </div>
+
+    <div class="text-center">
+      <div class="text-3xl font-bold">
+        {% set total_missing = results.details.values() |
+        map(attribute='missing') | map('length') | sum %} {{ total_missing }}
+      </div>
+      <p class="text-sm opacity-90">Skills to Add</p>
+    </div>
+
+    <div class="text-center">
+      <div class="text-3xl font-bold">
+        {% if results.semantic_matches %} {% set semantic_count =
+        results.semantic_matches.values() | map('length') | sum %} {{
+        semantic_count }} {% else %} 0 {% endif %}
+      </div>
+      <p class="text-sm opacity-90">AI Matches</p>
+    </div>
+  </div>
+
+  <div class="mt-6 text-center">
+    {% if results.weighted_score is not none %} {% set improvement =
+    results.weighted_score - results.basic_score %} {% if improvement > 0 %}
+    <p class="text-lg">
+      🎉 Smart scoring improved your match by
+      <strong>{{ improvement | round(1) }}%</strong>!
+    </p>
+    {% endif %} {% endif %} {% if results.semantic_matches %} {% set
+    semantic_count = results.semantic_matches.values() | map('length') | sum %}
+    {% if semantic_count > 0 %}
+    <p class="text-sm opacity-90 mt-2">
+      AI found {{ semantic_count }} additional skill matches that traditional
+      methods missed.
+    </p>
+    {% endif %} {% endif %}
+  </div>
+</div>
+
+<!-- Action Items -->
+<div
+  class="bg-white rounded-xl shadow-lg p-6 mt-8 hover-lift animate-fade-in"
+  style="animation-delay: 0.9s"
+>
+  <h2 class="text-2xl font-bold text-gray-900 mb-4">🎯 Next Steps</h2>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div>
+      <h3 class="font-semibold text-gray-800 mb-3">Immediate Actions</h3>
+      <ul class="space-y-2 text-sm text-gray-600">
+        {% set total_missing = results.details.values() |
+        map(attribute='missing') | map('length') | sum %} {% if total_missing >
+        0 %}
+        <li class="flex items-start">
+          <span class="text-red-500 mr-2">•</span>
+          Add the {{ total_missing }} missing skills to your resume
+        </li>
+        {% endif %} {% if results.ats_results and results.ats_results.ats_score
+        < 80 %}
+        <li class="flex items-start">
+          <span class="text-yellow-500 mr-2">•</span>
+          Improve ATS compatibility (currently {{ results.ats_results.ats_score
+          }}%)
+        </li>
+        {% endif %}
+
+        <li class="flex items-start">
+          <span class="text-blue-500 mr-2">•</span>
+          Focus on skills in your target job category
+        </li>
+      </ul>
+    </div>
+
+    <div>
+      <h3 class="font-semibold text-gray-800 mb-3">Long-term Goals</h3>
+      <ul class="space-y-2 text-sm text-gray-600">
+        <li class="flex items-start">
+          <span class="text-green-500 mr-2">•</span>
+          Develop skills in emerging technologies
+        </li>
+        <li class="flex items-start">
+          <span class="text-purple-500 mr-2">•</span>
+          Gain certifications for missing technical skills
+        </li>
+        <li class="flex items-start">
+          <span class="text-orange-500 mr-2">•</span>
+          Update your resume regularly with new skills
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

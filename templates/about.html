@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block title %}About - AI Resume Analyzer{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <!-- Hero Section -->
+    <div class="text-center mb-12 animate-fade-in">
+        <h1 class="text-4xl md:text-5xl font-bold gradient-text mb-6">
+            About AI Resume Analyzer
+        </h1>
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+            Empowering job seekers with AI-powered insights to optimize their resumes 
+            and increase their chances of landing their dream job.
+        </p>
+    </div>
+
+    <!-- Mission Section -->
+    <div class="bg-white rounded-xl shadow-lg p-8 mb-8 hover-lift animate-fade-in" style="animation-delay: 0.2s;">
+        <h2 class="text-3xl font-bold text-gray-900 mb-6">🎯 Our Mission</h2>
+        <p class="text-gray-600 text-lg leading-relaxed mb-4">
+            In today's competitive job market, having a well-optimized resume is crucial for success. 
+            Our AI Resume Analyzer bridges the gap between job seekers and their ideal positions by 
+            providing intelligent, data-driven insights that traditional resume reviews simply cannot match.
+        </p>
+        <p class="text-gray-600 text-lg leading-relaxed">
+            We believe that everyone deserves a fair chance to showcase their skills and experience 
+            effectively, regardless of their background in resume writing or access to expensive career services.
+        </p>
+    </div>
+
+    <!-- Features Section -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+        <div class="bg-white rounded-xl shadow-lg p-6 hover-lift animate-fade-in" style="animation-delay: 0.4s;">
+            <div class="text-4xl mb-4">🧠</div>
+            <h3 class="text-xl font-bold text-gray-900 mb-4">AI-Powered Analysis</h3>
+            <p class="text-gray-600">
+                Our advanced semantic matching technology goes beyond simple keyword matching. 
+                We understand context, synonyms, and related skills to provide more accurate 
+                and comprehensive analysis than traditional ATS systems.
+            </p>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-lg p-6 hover-lift animate-fade-in" style="animation-delay: 0.5s;">
+            <div class="text-4xl mb-4">📊</div>
+            <h3 class="text-xl font-bold text-gray-900 mb-4">Comprehensive Scoring</h3>
+            <p class="text-gray-600">
+                Get both basic and smart scores that adapt to different job roles and industries. 
+                Our weighted scoring system considers the importance of different skills based on 
+                job titles and industry standards.
+            </p>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-lg p-6 hover-lift animate-fade-in" style="animation-delay: 0.6s;">
+            <div class="text-4xl mb-4">🤖</div>
+            <h3 class="text-xl font-bold text-gray-900 mb-4">ATS Compatibility</h3>
+            <p class="text-gray-600">
+                Ensure your resume passes through Applicant Tracking Systems with our 
+                comprehensive ATS compatibility check. We analyze formatting, structure, 
+                and content to maximize your chances of reaching human recruiters.
+            </p>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-lg p-6 hover-lift animate-fade-in" style="animation-delay: 0.7s;">
+            <div class="text-4xl mb-4">💡</div>
+            <h3 class="text-xl font-bold text-gray-900 mb-4">Actionable Insights</h3>
+            <p class="text-gray-600">
+                Receive specific, actionable recommendations to improve your resume. 
+                From missing skills to formatting issues, we provide clear guidance 
+                on how to optimize your resume for maximum impact.
+            </p>
+        </div>
+    </div>
+
+    <!-- How It Works -->
+    <div class="bg-white rounded-xl shadow-lg p-8 mb-8 hover-lift animate-fade-in" style="animation-delay: 0.8s;">
+        <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">🔍 How It Works</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="text-2xl">📄</span>
+                </div>
+                <h3 class="font-bold text-gray-900 mb-2">1. Upload Resume</h3>
+                <p class="text-sm text-gray-600">Upload your resume in PDF format for analysis</p>
+            </div>
+            
+            <div class="text-center">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="text-2xl">🧠</span>
+                </div>
+                <h3 class="font-bold text-gray-900 mb-2">2. AI Processing</h3>
+                <p class="text-sm text-gray-600">Our AI analyzes your resume against job requirements</p>
+            </div>
+            
+            <div class="text-center">
+                <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="text-2xl">📊</span>
+                </div>
+                <h3 class="font-bold text-gray-900 mb-2">3. Score Calculation</h3>
+                <p class="text-sm text-gray-600">Get detailed match scores and compatibility ratings</p>
+            </div>
+            
+            <div class="text-center">
+                <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="text-2xl">💡</span>
+                </div>
+                <h3 class="font-bold text-gray-900 mb-2">4. Get Insights</h3>
+                <p class="text-sm text-gray-600">Receive actionable recommendations for improvement</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Technology Stack -->
+    <div class="bg-white rounded-xl shadow-lg p-8 mb-8 hover-lift animate-fade-in" style="animation-delay: 1.0s;">
+        <h2 class="text-3xl font-bold text-gray-900 mb-6">⚙️ Technology Stack</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+                <h3 class="text-xl font-semibold text-gray-800 mb-4">Backend Technologies</h3>
+                <ul class="space-y-2 text-gray-600">
+                    <li class="flex items-center"><span class="text-green-500 mr-2">•</span> Python Flask Framework</li>
+                    <li class="flex items-center"><span class="text-green-500 mr-2">•</span> Natural Language Processing (NLP)</li>
+                    <li class="flex items-center"><span class="text-green-500 mr-2">•</span> Machine Learning Algorithms</li>
+                    <li class="flex items-center"><span class="text-green-500 mr-2">•</span> PDF Processing (PyMuPDF)</li>
+                    <li class="flex items-center"><span class="text-green-500 mr-2">•</span> Semantic Similarity Analysis</li>
+                </ul>
+            </div>
+            
+            <div>
+                <h3 class="text-xl font-semibold text-gray-800 mb-4">Frontend Technologies</h3>
+                <ul class="space-y-2 text-gray-600">
+                    <li class="flex items-center"><span class="text-blue-500 mr-2">•</span> Modern HTML5 & CSS3</li>
+                    <li class="flex items-center"><span class="text-blue-500 mr-2">•</span> Tailwind CSS Framework</li>
+                    <li class="flex items-center"><span class="text-blue-500 mr-2">•</span> Responsive Design</li>
+                    <li class="flex items-center"><span class="text-blue-500 mr-2">•</span> Progressive Enhancement</li>
+                    <li class="flex items-center"><span class="text-blue-500 mr-2">•</span> Accessibility Features</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Privacy & Security -->
+    <div class="bg-gradient-to-r from-green-400 to-blue-500 rounded-xl shadow-lg p-8 text-white mb-8 hover-lift animate-fade-in" style="animation-delay: 1.2s;">
+        <h2 class="text-3xl font-bold mb-6">🔒 Privacy & Security</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+                <h3 class="text-xl font-semibold mb-4">Data Protection</h3>
+                <ul class="space-y-2 opacity-90">
+                    <li class="flex items-start"><span class="mr-2">•</span> Resumes are processed temporarily and not stored permanently</li>
+                    <li class="flex items-start"><span class="mr-2">•</span> All data is encrypted during transmission</li>
+                    <li class="flex items-start"><span class="mr-2">•</span> No personal information is shared with third parties</li>
+                </ul>
+            </div>
+            
+            <div>
+                <h3 class="text-xl font-semibold mb-4">Security Measures</h3>
+                <ul class="space-y-2 opacity-90">
+                    <li class="flex items-start"><span class="mr-2">•</span> Secure file upload with validation</li>
+                    <li class="flex items-start"><span class="mr-2">•</span> Regular security updates and monitoring</li>
+                    <li class="flex items-start"><span class="mr-2">•</span> GDPR and privacy law compliance</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white rounded-xl shadow-lg p-6 text-center hover-lift animate-fade-in" style="animation-delay: 1.4s;">
+            <div class="text-3xl font-bold text-blue-600 mb-2">95%</div>
+            <p class="text-gray-600">Accuracy Rate</p>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-lg p-6 text-center hover-lift animate-fade-in" style="animation-delay: 1.5s;">
+            <div class="text-3xl font-bold text-green-600 mb-2">&lt;30s</div>
+            <p class="text-gray-600">Average Analysis Time</p>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-lg p-6 text-center hover-lift animate-fade-

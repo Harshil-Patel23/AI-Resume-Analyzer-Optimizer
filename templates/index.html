@@ -1,0 +1,446 @@
+{% extends "base.html" %} {% block title %}AI Resume Analyzer - Get Your Perfect
+Match Score{% endblock %} {% block content %}
+<!-- Hero Section -->
+<div class="text-center mb-12 animate-fade-in">
+  <h1 class="text-4xl md:text-6xl font-bold gradient-text mb-6">
+    🤖 AI-Powered Resume Analyzer
+  </h1>
+  <p class="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+    Get instant insights, match scores, and optimization tips for your resume
+    using advanced AI technology. Stand out from the crowd and land your dream
+    job.
+  </p>
+  <div class="flex justify-center space-x-4 text-sm text-gray-500">
+    <span class="flex items-center"
+      ><span class="text-green-500 mr-1">✓</span> AI Semantic Matching</span
+    >
+    <span class="flex items-center"
+      ><span class="text-green-500 mr-1">✓</span> ATS Compatibility</span
+    >
+    <span class="flex items-center"
+      ><span class="text-green-500 mr-1">✓</span> Smart Optimization</span
+    >
+  </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+  <!-- Main Form - NOW INCLUDES ALL FIELDS -->
+  <div class="lg:col-span-2">
+    <div
+      class="bg-white rounded-xl shadow-lg p-6 md:p-8 hover-lift animate-fade-in"
+    >
+      <form
+        method="POST"
+        action="{{ url_for('analyze_resume') }}"
+        enctype="multipart/form-data"
+        onsubmit="handleFormSubmit(event)"
+      >
+        <!-- Resume Upload -->
+        <div class="mb-8">
+          <label class="block text-lg font-semibold text-gray-900 mb-4">
+            📄 Upload Your Resume
+          </label>
+          <div
+            class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors"
+          >
+            <input
+              type="file"
+              name="resume_file"
+              id="resume_file"
+              accept=".pdf"
+              required
+              class="hidden"
+              onchange="handleFileSelect(event)"
+            />
+            <label for="resume_file" class="cursor-pointer">
+              <div class="text-gray-400 mb-2">
+                <svg
+                  class="mx-auto h-12 w-12"
+                  stroke="currentColor"
+                  fill="none"
+                  viewBox="0 0 48 48"
+                >
+                  <path
+                    d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </div>
+              <p class="text-gray-600">Click to upload PDF or drag and drop</p>
+              <p class="text-sm text-gray-400 mt-1">Maximum file size: 10MB</p>
+            </label>
+            <div id="file-preview" class="mt-4"></div>
+          </div>
+        </div>
+
+        <!-- Job Description -->
+        <div class="mb-8">
+          <label
+            for="job_description"
+            class="block text-lg font-semibold text-gray-900 mb-4"
+          >
+            📋 Job Description
+          </label>
+          <textarea
+            name="job_description"
+            id="job_description"
+            rows="8"
+            required
+            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+            placeholder="Paste the complete job description here including requirements, responsibilities, and qualifications..."
+          ></textarea>
+        </div>
+
+        <!-- Job Title -->
+        <div class="mb-8">
+          <label
+            for="job_title"
+            class="block text-lg font-semibold text-gray-900 mb-4"
+          >
+            💼 Job Title (Optional)
+          </label>
+          <input
+            type="text"
+            name="job_title"
+            id="job_title"
+            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            placeholder="e.g., Senior Data Scientist"
+          />
+          <p class="text-sm text-gray-500 mt-1">
+            Helps optimize scoring weights for specific roles
+          </p>
+        </div>
+
+        <!-- Hidden fields for settings (will be populated by JavaScript) -->
+        <input
+          type="hidden"
+          name="semantic_threshold"
+          id="hidden_semantic_threshold"
+          value="0.7"
+        />
+        <input
+          type="hidden"
+          name="enable_semantic"
+          id="hidden_enable_semantic"
+          value="on"
+        />
+        <input
+          type="hidden"
+          name="enable_weighted"
+          id="hidden_enable_weighted"
+          value="on"
+        />
+        <input
+          type="hidden"
+          name="enable_suggestions"
+          id="hidden_enable_suggestions"
+          value="on"
+        />
+        <input
+          type="hidden"
+          name="enable_ats"
+          id="hidden_enable_ats"
+          value="on"
+        />
+
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          id="submit-btn"
+          class="w-full gradient-bg text-white py-4 px-8 rounded-lg font-semibold text-lg hover:opacity-90 transition-all duration-200 hover-lift"
+        >
+          🚀 ANALYZE RESUME
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Settings Sidebar -->
+  <div class="space-y-6">
+    <!-- Analysis Settings -->
+    <div
+      class="bg-white rounded-xl shadow-lg p-6 hover-lift animate-fade-in"
+      style="animation-delay: 0.2s"
+    >
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">
+        ⚙️ Analysis Settings
+      </h3>
+      <div class="space-y-4">
+        <!-- Semantic Threshold -->
+        <div>
+          <label
+            for="semantic_threshold"
+            class="block text-sm font-medium text-gray-700 mb-2"
+          >
+            AI Similarity Threshold
+          </label>
+          <input
+            type="range"
+            id="semantic_threshold"
+            min="0.5"
+            max="0.9"
+            step="0.05"
+            value="0.7"
+            class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+            onchange="updateHiddenField('hidden_semantic_threshold', this.value)"
+          />
+          <div class="flex justify-between text-xs text-gray-500 mt-1">
+            <span>Lenient</span>
+            <span id="threshold-value">0.7</span>
+            <span>Strict</span>
+          </div>
+          <p class="text-xs text-gray-500 mt-1">
+            How similar skills need to be for AI matching
+          </p>
+        </div>
+
+        <!-- Analysis Options -->
+        <div class="space-y-3">
+          <h4 class="text-sm font-medium text-gray-700">Analysis Features</h4>
+          <label class="flex items-center">
+            <input
+              type="checkbox"
+              id="enable_semantic"
+              checked
+              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              onchange="updateHiddenCheckbox('hidden_enable_semantic', this.checked)"
+            />
+            <span class="ml-2 text-sm text-gray-700">AI Semantic Matching</span>
+          </label>
+          <label class="flex items-center">
+            <input
+              type="checkbox"
+              id="enable_weighted"
+              checked
+              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              onchange="updateHiddenCheckbox('hidden_enable_weighted', this.checked)"
+            />
+            <span class="ml-2 text-sm text-gray-700">Smart Scoring</span>
+          </label>
+          <label class="flex items-center">
+            <input
+              type="checkbox"
+              id="enable_suggestions"
+              checked
+              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              onchange="updateHiddenCheckbox('hidden_enable_suggestions', this.checked)"
+            />
+            <span class="ml-2 text-sm text-gray-700">Optimization Tips</span>
+          </label>
+          <label class="flex items-center">
+            <input
+              type="checkbox"
+              id="enable_ats"
+              checked
+              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              onchange="updateHiddenCheckbox('hidden_enable_ats', this.checked)"
+            />
+            <span class="ml-2 text-sm text-gray-700"
+              >ATS Compatibility Check</span
+            >
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- How to Use -->
+    <div
+      class="bg-white rounded-xl shadow-lg p-6 hover-lift animate-fade-in"
+      style="animation-delay: 0.4s"
+    >
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">📋 How to Use</h3>
+      <div class="space-y-3 text-sm text-gray-600">
+        <div class="flex items-start">
+          <span
+            class="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-800 rounded-full flex items-center justify-center text-xs font-medium mr-3 mt-0.5"
+            >1</span
+          >
+          <p>
+            <strong>Upload Resume:</strong> PDF format preferred for best
+            results
+          </p>
+        </div>
+        <div class="flex items-start">
+          <span
+            class="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-800 rounded-full flex items-center justify-center text-xs font-medium mr-3 mt-0.5"
+            >2</span
+          >
+          <p>
+            <strong>Job Description:</strong> Paste the complete job posting
+          </p>
+        </div>
+        <div class="flex items-start">
+          <span
+            class="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-800 rounded-full flex items-center justify-center text-xs font-medium mr-3 mt-0.5"
+            >3</span
+          >
+          <p><strong>Configure:</strong> Adjust analysis settings as needed</p>
+        </div>
+        <div class="flex items-start">
+          <span
+            class="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-800 rounded-full flex items-center justify-center text-xs font-medium mr-3 mt-0.5"
+            >4</span
+          >
+          <p><strong>Analyze:</strong> Get comprehensive insights and tips</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Features Preview -->
+    <div
+      class="bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-lg p-6 text-white hover-lift animate-fade-in"
+      style="animation-delay: 0.6s"
+    >
+      <h3 class="text-lg font-semibold mb-4">✨ What You'll Get</h3>
+      <div class="space-y-2 text-sm">
+        <div class="flex items-center">
+          <span class="mr-2">📊</span>
+          <span>Detailed match percentage</span>
+        </div>
+        <div class="flex items-center">
+          <span class="mr-2">🧠</span>
+          <span>AI-powered skill matching</span>
+        </div>
+        <div class="flex items-center">
+          <span class="mr-2">💡</span>
+          <span>Actionable optimization tips</span>
+        </div>
+        <div class="flex items-center">
+          <span class="mr-2">🤖</span>
+          <span>ATS compatibility score</span>
+        </div>
+        <div class="flex items-center">
+          <span class="mr-2">📈</span>
+          <span>Experience analysis</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Features Section -->
+<div class="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+  <div
+    class="text-center p-6 bg-white rounded-xl shadow-lg hover-lift animate-fade-in"
+    style="animation-delay: 0.8s"
+  >
+    <div class="text-3xl mb-3">🎯</div>
+    <h3 class="font-semibold text-gray-900 mb-2">Precision Matching</h3>
+    <p class="text-sm text-gray-600">
+      Advanced algorithms match your skills with job requirements accurately
+    </p>
+  </div>
+  <div
+    class="text-center p-6 bg-white rounded-xl shadow-lg hover-lift animate-fade-in"
+    style="animation-delay: 1s"
+  >
+    <div class="text-3xl mb-3">⚡</div>
+    <h3 class="font-semibold text-gray-900 mb-2">Instant Results</h3>
+    <p class="text-sm text-gray-600">
+      Get comprehensive analysis in seconds, not hours
+    </p>
+  </div>
+  <div
+    class="text-center p-6 bg-white rounded-xl shadow-lg hover-lift animate-fade-in"
+    style="animation-delay: 1.2s"
+  >
+    <div class="text-3xl mb-3">🔒</div>
+    <h3 class="font-semibold text-gray-900 mb-2">Privacy First</h3>
+    <p class="text-sm text-gray-600">
+      Your resume is processed securely and not stored permanently
+    </p>
+  </div>
+  <div
+    class="text-center p-6 bg-white rounded-xl shadow-lg hover-lift animate-fade-in"
+    style="animation-delay: 1.4s"
+  >
+    <div class="text-3xl mb-3">🚀</div>
+    <h3 class="font-semibold text-gray-900 mb-2">Career Boost</h3>
+    <p class="text-sm text-gray-600">
+      Optimize your resume to increase interview chances significantly
+    </p>
+  </div>
+</div>
+{% endblock %} {% block extra_js %}
+<script>
+  // Update threshold value display and hidden field
+  const thresholdSlider = document.getElementById("semantic_threshold");
+  const thresholdValue = document.getElementById("threshold-value");
+
+  if (thresholdSlider && thresholdValue) {
+    thresholdSlider.oninput = function () {
+      thresholdValue.textContent = this.value;
+      updateHiddenField("hidden_semantic_threshold", this.value);
+    };
+  }
+
+  // Function to update hidden fields for form submission
+  function updateHiddenField(fieldId, value) {
+    const hiddenField = document.getElementById(fieldId);
+    if (hiddenField) {
+      hiddenField.value = value;
+    }
+  }
+
+  // Function to update hidden checkbox fields
+  function updateHiddenCheckbox(fieldId, checked) {
+    const hiddenField = document.getElementById(fieldId);
+    if (hiddenField) {
+      hiddenField.value = checked ? "on" : "off";
+    }
+  }
+
+  // Handle form submission
+  function handleFormSubmit(event) {
+    // Update all hidden fields before submission
+    const semanticThreshold = document.getElementById("semantic_threshold");
+    const enableSemantic = document.getElementById("enable_semantic");
+    const enableWeighted = document.getElementById("enable_weighted");
+    const enableSuggestions = document.getElementById("enable_suggestions");
+    const enableAts = document.getElementById("enable_ats");
+
+    if (semanticThreshold)
+      updateHiddenField("hidden_semantic_threshold", semanticThreshold.value);
+    if (enableSemantic)
+      updateHiddenCheckbox("hidden_enable_semantic", enableSemantic.checked);
+    if (enableWeighted)
+      updateHiddenCheckbox("hidden_enable_weighted", enableWeighted.checked);
+    if (enableSuggestions)
+      updateHiddenCheckbox(
+        "hidden_enable_suggestions",
+        enableSuggestions.checked
+      );
+    if (enableAts) updateHiddenCheckbox("hidden_enable_ats", enableAts.checked);
+
+    const overlay = document.createElement("div");
+    overlay.id = "loading-overlay";
+    overlay.className =
+      "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50";
+    overlay.innerHTML = `
+                <div class="bg-white p-6 rounded-lg shadow-xl text-center">
+                    <div class="loading-spinner mx-auto mb-4"></div>
+                    <p class="text-gray-600">Analyzing your resume with AI...</p>
+                    <p class="text-sm text-gray-400 mt-2">This may take a few moments</p>
+                </div>
+            `;
+    document.body.appendChild(overlay);
+  }
+
+  // File selection handler
+  function handleFileSelect(event) {
+    const file = event.target.files[0];
+    const preview = document.getElementById("file-preview");
+
+    if (file && preview) {
+      preview.innerHTML = `
+        <div class="flex items-center justify-center text-sm text-gray-600 mt-2">
+          <span class="text-green-500 mr-2">✓</span>
+          <span>${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)</span>
+        </div>
+      `;
+    }
+  }
+</script>
+{% endblock %}
