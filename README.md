@@ -2,9 +2,9 @@
 
 An intelligent tool that analyzes your resume against job descriptions to help you optimize your application and increase your chances of getting hired.
 
-## 🚀 Live Demo
+<!-- ## 🚀 Live Demo
 
-👉 [Click here to try the live app](https://ai-powered-resume-analyzer-optimizer.streamlit.app/)
+👉 [Click here to try the live app](https://ai-powered-resume-analyzer-optimizer.streamlit.app/) -->
 
 ## 🚀 Features
 
